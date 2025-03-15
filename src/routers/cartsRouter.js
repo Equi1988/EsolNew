@@ -45,3 +45,29 @@ router.post('/:cid/product/:pid', async (req, res) => {
 
 module.exports = router;
 
+
+
+// const { Router } = require("express");
+// const router = Router();
+
+// let carts = []; // Array temporal para almacenar carritos
+
+// router.post("/", (req, res) => {
+//     const newCart = {
+//         id: Date.now(),
+//         products: [],
+//     };
+//     carts.push(newCart);
+//     res.status(201).json(newCart);
+// });
+
+// router.get("/:id", (req, res) => {
+//     const cart = carts.find((c) => c.id === parseInt(req.params.id));
+//     if (cart) {
+//         res.json(cart);
+//     } else {
+//         res.status(404).json({ error: "Carrito no encontrado" });
+//     }
+// });
+
+// module.exports = router;
