@@ -1,9 +1,16 @@
 <h1>Productos en Tiempo Real</h1>
-<form id="addProductForm">
-    <input type="text" id="productName" placeholder="Nombre del producto" required>
-    <input type="number" id="productPrice" placeholder="Precio" required>
-    <button type="submit">Agregar Producto</button>
-</form>
+<div>
+    <form id="addProductForm" style="display: flex; flex-direction: column; gap: 10px; width: 300px; font-size: 14px;">
+        <input type="text" id="productName" placeholder="Nombre del producto" required style="padding: 5px;">
+        <input type="number" id="productPrice" placeholder="Precio" required style="padding: 5px;">
+        <input type="text" id="description" placeholder="Descripcion" required style="padding: 5px;">
+        <input type="number" id="code" placeholder="Code" required style="padding: 5px;">
+        <input type="number" id="stock" placeholder="Stock" required style="padding: 5px;">
+        <button type="submit" style="padding: 5px;">Agregar Producto</button>
+    </form>
+</div>
+
+
 
 <ul id="productList">
     <!-- Los productos se agregarán aquí dinámicamente -->
@@ -11,6 +18,7 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/clientapp.js"></script>
+
 
 
 

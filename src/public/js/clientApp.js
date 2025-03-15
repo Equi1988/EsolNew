@@ -1,6 +1,6 @@
 const socket = io();
 
-// Escuchar la lista inicial de productos
+// Escuchar lista inicial de productos
 socket.on("initialProducts", (productos) => {
     updateProductList(productos);
 });
@@ -10,7 +10,7 @@ socket.on("newProduct", (product) => {
     const productList = document.getElementById("productList");
     const newProduct = document.createElement("li");
     newProduct.id = `product-${product.id}`;
-    newProduct.innerHTML = `${product.name} - $${product.price} <button onclick="deleteProduct(${product.id})">Eliminar</button>`;
+    newProduct.innerHTML = `${product.title} - $${product.price} <button onclick="deleteProduct(${product.id})">Eliminar</button>`;
     productList.appendChild(newProduct);
 });
 
@@ -26,12 +26,11 @@ socket.on("deleteProduct", (id) => {
 document.getElementById("addProductForm").addEventListener("submit", function (event) {
     event.preventDefault();
 
-    const name = document.getElementById("productName").value;
+    const title = document.getElementById("productName").value;
     const price = parseFloat(document.getElementById("productPrice").value);
 
-    const newProduct = { id: Date.now(), name, price };
+    const newProduct = { title, price, description: "", code: "", stock: 0, category: "", status: true, thumbnails: "" };
 
-    // Enviar producto al servidor
     socket.emit("newProduct", newProduct);
 
     // Limpiar el formulario
@@ -47,13 +46,14 @@ function deleteProduct(id) {
 // Función para actualizar la lista de productos
 function updateProductList(productos) {
     const productList = document.getElementById("productList");
-    productList.innerHTML = ""; // Limpiar la lista existente
+    productList.innerHTML = ""; // Limpiar la lista actual
 
     productos.forEach((product) => {
         const newProduct = document.createElement("li");
         newProduct.id = `product-${product.id}`;
-        newProduct.innerHTML = `${product.name} - $${product.price} <button onclick="deleteProduct(${product.id})">Eliminar</button>`;
+        newProduct.innerHTML = `${product.title} - $${product.price} <button onclick="deleteProduct(${product.id})">Eliminar</button>`;
         productList.appendChild(newProduct);
     });
 }
+
 

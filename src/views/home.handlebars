@@ -6,11 +6,19 @@
     <title>Lista de Productos</title>
 </head>
 <body>
-    <h1>Lista de Productos</h1>
-    <ul>
-        {{#each products}}
-        <li>{{this.title}} - ${{this.price}}</li>
-        {{/each}}
-    </ul>
+<h1>{{title}}</h1>
+<ul>
+    {{#each productos}}
+    <li>
+        <strong>{{this.title}}</strong> - ${{this.price}}<br>
+        <small>Descripción: {{this.description}}</small><br>
+        <small>Código: {{this.code}}</small><br>
+        <small>Stock: {{this.stock}}</small><br>
+        <small>Categoría: {{this.category}}</small><br>
+        <small>Estado: {{#if this.status}}Disponible{{else}}No Disponible{{/if}}</small><br>
+        <small>Imágenes: {{this.thumbnails}}</small>
+    </li>
+    {{/each}}
+</ul>
 </body>
 </html>
