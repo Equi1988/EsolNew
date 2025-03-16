@@ -82,7 +82,7 @@ function updateProductView(products) {
 
     products.forEach(product => {
         const productElement = document.createElement('div');
-        productElement.classList.add('product-item'); // Agregar una clase para estilos CSS
+        productElement.classList.add('product-item');
 
         productElement.innerHTML = `
             <h3>${product.title}</h3>

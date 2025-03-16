@@ -64,7 +64,7 @@ class ProductsManager {
     // Agregar producto al carrito
     static async addProductToCart(cartId, productId) {
         console.log(`Agregando producto ${productId} al carrito ${cartId}`);
-        const carts = await this.getCarts(); // Implementar lógica para obtener carritos
+        const carts = await this.getCarts();
         let cart = carts.find((cart) => cart.id === parseInt(cartId));
 
         if (!cart) {
@@ -93,7 +93,7 @@ class ProductsManager {
         product.stock -= 1;
         await this.updateProduct(productId, { stock: product.stock });
 
-        await this.saveCarts(carts); // Implementar lógica para guardar carritos
+        await this.saveCarts(carts);
         console.log(`Producto ${productId} agregado al carrito ${cartId}`);
         return cart;
     }
