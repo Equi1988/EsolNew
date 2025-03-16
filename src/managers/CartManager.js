@@ -26,51 +26,67 @@ class CartManager {
         return carts.find(cart => cart.id === parseInt(cid));
     }
 
-    static async addProductToCart(cid, pid) {
-        let carts = await this.getCarts();
-        let cart = carts.find(cart => cart.id === parseInt(cid));
-    
-        // Crear el carrito automáticamente si no existe
+    static async addProductToCart(cartId, productId) {
+        const carts = await this.getCarts();
+        let cart = carts.find((cart) => cart.id === parseInt(cartId));
+
+        // Si no existe el carrito, se crea uno nuevo
         if (!cart) {
-            console.log(`Cart with ID ${cid} not found. Creating a new cart.`);
-            cart = { id: parseInt(cid), products: [] };
+            console.log(`Cart ${cartId} not found. Creating a new one.`);
+            cart = { id: parseInt(cartId), products: [] };
             carts.push(cart);
         }
-    
-        // Verificar si el producto existe en la base de datos
-        let product = await ProductsManager.getProductById(parseInt(pid));
-        if (!product) throw new Error("Product not found in database");
-    
+
+        // Obtener el producto del archivo products.json
+        const product = await ProductsManager.getProductById(productId);
+        console.log("Product retrieved for cart:", product);
+
+        // Manejar errores si el producto no existe o el stock es insuficiente
+        if (!product) throw new Error("Product not found");
         if (product.stock <= 0) throw new Error("Product is out of stock");
-    
+
+        // Reducir el stock del producto antes de agregarlo al carrito
+        const updatedProduct = { ...product, stock: product.stock - 1 };
+        console.log(`Stock after reduction: ${updatedProduct.stock}`);
+
+        // Guardar los cambios del producto actualizado
+        await ProductsManager.updateProduct(productId, { stock: updatedProduct.stock });
+
         // Agregar o actualizar el producto en el carrito
-        let cartProduct = cart.products.find(p => p.id === parseInt(pid));
+        const cartProduct = cart.products.find((p) => p.id === productId);
         if (cartProduct) {
             cartProduct.quantity += 1;
         } else {
             cart.products.push({
-                id: parseInt(pid),
+                id: productId,
                 title: product.title,
-                description: product.description,
                 price: product.price,
-                category: product.category,
-                quantity: 1
+                stock: product.stock,
+                quantity: 1,
             });
         }
-    
-        // Reducir el stock del producto en la base de datos
-        product.stock -= 1;
-        await ProductsManager.updateProduct(pid, { stock: product.stock });
-    
-        // Guardar los cambios en el archivo carts.json
-        await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2));
-        console.log(`Product ID: ${pid} added to cart ID: ${cid}`);
+
+        // Guardar los cambios en el carrito
+        await this.saveCarts(carts);
+        console.log(`Product ${productId} added to cart ${cartId}`);
         return cart;
     }
-    
+
+    // Método para guardar los carritos en el archivo
+    static async saveCarts(carts) {
+        try {
+            await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2));
+            console.log("Carts saved successfully!");
+        } catch (error) {
+            console.error("Error saving carts:", error);
+            throw new Error("Unable to save carts");
+        }
+    }
 }
 
 module.exports = CartManager;
+
+
 
 
 

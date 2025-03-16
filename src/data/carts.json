@@ -1,2 +1,21 @@
 [
+  {
+    "id": 1,
+    "products": [
+      {
+        "id": "1",
+        "title": "Sony Playstation 5 dual",
+        "price": 2500000,
+        "stock": 10,
+        "quantity": 10
+      },
+      {
+        "id": "2",
+        "title": "Sony Playstation 4 slim",
+        "price": 1500000,
+        "stock": 10,
+        "quantity": 7
+      }
+    ]
+  }
 ]

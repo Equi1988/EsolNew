@@ -1,1 +1,24 @@
-[]
+[
+  {
+    "id": 1,
+    "title": "Sony Playstation 5 dual",
+    "price": 2500000,
+    "description": "Sony",
+    "code": "100",
+    "stock": 1,
+    "category": "consola",
+    "status": true,
+    "thumbnails": ""
+  },
+  {
+    "title": "Sony Playstation 4 slim",
+    "description": "Sony",
+    "code": "101",
+    "price": 1500000,
+    "status": true,
+    "stock": 3,
+    "category": "consola",
+    "thumbnails": "",
+    "id": 2
+  }
+]

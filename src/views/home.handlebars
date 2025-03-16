@@ -3,22 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
     <title>Lista de Productos</title>
 </head>
 <body>
-<h1>{{title}}</h1>
-<ul>
-    {{#each productos}}
-    <li>
-        <strong>{{this.title}}</strong> - ${{this.price}}<br>
-        <small>Descripción: {{this.description}}</small><br>
-        <small>Código: {{this.code}}</small><br>
-        <small>Stock: {{this.stock}}</small><br>
-        <small>Categoría: {{this.category}}</small><br>
-        <small>Estado: {{#if this.status}}Disponible{{else}}No Disponible{{/if}}</small><br>
-        <small>Imágenes: {{this.thumbnails}}</small>
-    </li>
-    {{/each}}
-</ul>
+    <div class="main-container">
+        <h1>{{title}}</h1>
+        <div id="product-list" class="card-container">
+            {{#each productos}}
+            <div class="card">
+                <h2>{{this.title}}</h2>
+                <p class="price">$ {{this.price}}</p>
+                <p>Descripción: {{this.description}}</p>
+                <p>Código: {{this.code}}</p>
+                <p>Stock: {{this.stock}}</p>
+                <p>Categoría: {{this.category}}</p>
+                <p>
+                    Estado:
+                    {{#if this.status}}
+                    Disponible
+                    {{else}}
+                    No Disponible
+                    {{/if}}
+                </p>
+                <button class="add-to-cart-btn" data-id="{{this.id}}">Agregar al Carrito</button>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/home.js"></script>
+    <script src="/js/clientapp.js"></script>
+
 </body>
+
 </html>

@@ -1,32 +1,3 @@
-// const ProductsManager =require("../managers/ProductsManager");
-
-// const Router=require('express').Router;
-// const router=Router()
-
-// router.get('/',async(req,res)=>{
-
-//     try {
-//         let users=await ProductsManager.getProducts()
-    
-//         res.setHeader('Content-Type','application/json')
-//         res.status(200).json({users})
-        
-//     } catch (error) {
-//         res.setHeader('Content-Type','application/json');
-//         return res.status(500).json({error:`Internal server error`})
-//     }
-// })
-
-// router.post("/", async(req, res)=>{
-
-//     // logica del post... 
-//     res.setHeader('Content-Type','application/json');
-//     return res.status(201).json({payload:"product created"});
-// })
-
-
-// module.exports=router
-
 const ProductsManager = require("../managers/ProductsManager");
 const Router = require('express').Router;
 const router = Router();
