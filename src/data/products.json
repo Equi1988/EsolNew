@@ -16,9 +16,20 @@
     "code": "101",
     "price": 1500000,
     "status": true,
-    "stock": 3,
+    "stock": 2,
     "category": "consola",
     "thumbnails": "",
     "id": 2
+  },
+  {
+    "id": 3,
+    "title": "Nintendo 64",
+    "price": 250000,
+    "description": "Consola Nintendo 64",
+    "code": "104",
+    "stock": 4,
+    "category": "Consola",
+    "status": true,
+    "thumbnails": ""
   }
 ]

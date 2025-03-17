@@ -82,6 +82,17 @@ class CartManager {
             throw new Error("Unable to save carts");
         }
     }
+
+        static async deleteCart(cartId) {
+        const carts = await this.getCarts();
+        const index = carts.findIndex(cart => cart.id === parseInt(cartId));
+        if (index === -1) return false;
+        carts.splice(index, 1);
+        await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2));
+        return true;
+    }
+    
+
 }
 
 module.exports = CartManager;
