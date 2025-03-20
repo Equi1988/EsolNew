@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": 1,
+    "products": [
+      {
+        "id": "1",
+        "title": "Sony Playstation 4 slim",
+        "price": 1500000,
+        "stock": 7,
+        "quantity": 1
+      }
+    ]
+  }
+]
