@@ -1,104 +1,90 @@
-// Función para obtener los productos
-function fetchProducts() {
-    fetch('/api/products')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Error al obtener los productos: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Extraer los productos correctamente según la respuesta de la API
-            const products = Array.isArray(data) ? data : data.products;
+const socket = io();
 
-            if (Array.isArray(products)) {
-                updateProductView(products); // Actualiza la vista si es un array
-            } else {
-                console.error("El formato de 'products' no es válido:", products);
-            }
-        })
-        .catch(error => {
-            console.error('Error al obtener productos:', error);
-        });
-}
-
-// Función para actualizar la vista de productos
-function updateProductView(products) {
-    if (!Array.isArray(products)) {
-        console.error('El formato de "products" no es válido:', products);
-        return;
-    }
-
-    const productContainer = document.getElementById('product-list');
-    if (!productContainer) {
-        console.error('El contenedor con ID "product-list" no existe en el DOM.');
-        return;
-    }
-    productContainer.innerHTML = ''; // Limpia la vista actual
-
-    products.forEach(product => {
-        const productElement = document.createElement('div');
-        productElement.innerHTML = `
-            <h3>${product.title}</h3>
-            <p>Stock: ${product.stock}</p>
-            <p>Categoria: ${product.category}</p>
-            <p>Code:${product.code}</p>
-            <button onclick="addToCart(${product.id})">Agregar al carrito</button>
-        `;
-        productContainer.appendChild(productElement);
+// Solo si hay un <ul id="productList">
+const productList = document.getElementById("productList");
+if (productList) {
+    socket.on("initialProducts", (productos) => {
+        updateProductList(productos);
     });
-}
 
-// Función para agregar un producto al carrito
-async function addToCart(productId) {
-    const cartId = 1; // Identificador del carrito (puedes usar otro si gestionas múltiples carritos)
+    socket.on("newProduct", (product) => {
+        const newProduct = document.createElement("li");
+        newProduct.id = `product-${product.id}`;
+        newProduct.innerHTML = `${product.title} - $${product.price} <button onclick="deleteProduct(${product.id})">Eliminar</button>`;
+        productList.appendChild(newProduct);
+    });
 
-    try {
-        const response = await fetch(`/api/carts/${cartId}/product/${productId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-
-        const data = await response.json();
-
-        if (data.error) {
-            alert(`Error al agregar el producto: ${data.error}`);
-        } else {
-            alert('Producto agregado al carrito');
-            fetchProducts(); // Actualiza la lista de productos después de agregar
+    socket.on("deleteProduct", (id) => {
+        const productElement = document.getElementById(`product-${id}`);
+        if (productElement) {
+            productElement.remove();
         }
-    } catch (error) {
-        console.error('Error al agregar el producto al carrito:', error);
-        alert('No se pudo agregar el producto al carrito. Inténtalo más tarde.');
-    }
-}
-
-// Función para renderizar los productos en el DOM
-function updateProductView(products) {
-    const productContainer = document.getElementById('product-list');
-    productContainer.innerHTML = ''; // Limpiar el contenido actual
-
-    products.forEach(product => {
-        const productElement = document.createElement('div');
-        productElement.classList.add('product-item');
-
-        productElement.innerHTML = `
-            <h3>${product.title}</h3>
-            <p>Precio: $${product.price}</p>
-            <p>Stock: ${product.stock}</p>
-            <p>Categoria: ${product.category}</p>
-            <button onclick="addToCart(${product.id})" ${product.stock === 0 ? 'disabled' : ''}>
-                ${product.stock === 0 ? 'Sin stock' : 'Agregar al carrito'}
-            </button>
-        `;
-
-        productContainer.appendChild(productElement);
     });
 }
 
-// Lógica para inicializar la vista principal al cargar la página
-document.addEventListener('DOMContentLoaded', () => {
-    fetchProducts(); // Cargar productos al iniciar la aplicación
+// Solo si hay un formulario de agregar producto
+const addProductForm = document.getElementById("addProductForm");
+if (addProductForm) {
+    addProductForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const title = document.getElementById("productName").value;
+        const price = parseFloat(document.getElementById("productPrice").value);
+        const description = document.getElementById("productDescription").value;
+        const code = document.getElementById("productCode").value;
+        const stock = parseInt(document.getElementById("productStock").value);
+        const category = document.getElementById("productCategory").value;
+
+        const newProduct = { 
+            title, 
+            price, 
+            description, 
+            code, 
+            stock, 
+            category, 
+            status: true, 
+            thumbnails: "" 
+        };
+
+        socket.emit("newProduct", newProduct);
+
+        // Limpiar el formulario
+        addProductForm.reset();
+    });
+}
+
+function deleteProduct(id) {
+    socket.emit("deleteProduct", id);
+}
+
+function updateProductList(productos) {
+    if (!productList) return;
+
+    productList.innerHTML = ""; // Limpiar la lista actual
+    productos.forEach((product) => {
+        const newProduct = document.createElement("li");
+        newProduct.id = `product-${product.id}`;
+        newProduct.innerHTML = `${product.title} - $${product.price} <button onclick="deleteProduct(${product.id})">Eliminar</button>`;
+        productList.appendChild(newProduct);
+    });
+}
+
+document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+    button.addEventListener('click', async (e) => {
+        const id = e.target.dataset.id;
+        try {
+            const res = await fetch(`/api/carts/1/product/${id}`, {
+                method: 'POST'
+            });
+
+            if (res.ok) {
+                alert('Producto agregado al carrito!');
+            } else {
+                alert('Error al agregar al carrito');
+            }
+        } catch (err) {
+            console.error('Error:', err);
+        }
+    });
 });
+

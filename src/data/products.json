@@ -1,35 +1,24 @@
 [
   {
     "id": 1,
-    "title": "Sony Playstation 5 dual",
-    "price": 2500000,
+    "title": "Sony Playstation 4 slim",
     "description": "Sony",
-    "code": "100",
-    "stock": 1,
-    "category": "consola",
+    "code": "109",
+    "price": 1500000,
     "status": true,
+    "stock": 7,
+    "category": "consola",
     "thumbnails": ""
   },
   {
-    "title": "Sony Playstation 4 slim",
+    "id": 2,
+    "title": "Sony Playstation 5 slim",
     "description": "Sony",
-    "code": "101",
-    "price": 1500000,
+    "code": "110",
+    "price": 4500000,
     "status": true,
-    "stock": 2,
+    "stock": 8,
     "category": "consola",
-    "thumbnails": "",
-    "id": 2
-  },
-  {
-    "id": 3,
-    "title": "Nintendo 64",
-    "price": 250000,
-    "description": "Consola Nintendo 64",
-    "code": "104",
-    "stock": 4,
-    "category": "Consola",
-    "status": true,
     "thumbnails": ""
   }
 ]

@@ -14,15 +14,12 @@ router.get('/', async (req, res) => {
 });
 
 // Crear un nuevo carrito
-router.post('/', async (req, res) => {
-    try {
-        const cart = await CartManager.createCart();
-        res.status(201).json({ cart });
-    } catch (error) {
-        console.error("Error creating cart:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
+// POST /api/carts
+router.post("/", async (req, res) => {
+    const cart = await CartManager.createCart();
+    res.status(201).json(cart);
 });
+
 
 // Obtener un carrito específico por ID
 router.get('/:cid', async (req, res) => {

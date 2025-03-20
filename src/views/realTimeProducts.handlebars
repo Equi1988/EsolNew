@@ -7,11 +7,12 @@
     <title>Lista de Productos</title>
 </head>
 <body>
-<h1 style="text-align: center; color: #333;">Productos en Tiempo Real</h1>
+
+<h1 style="text-align: center;">Productos en Tiempo Real</h1>
 
 <div class="form-container">
     <form id="addProductForm" class="styled-form">
-        <input type="text" id="productName" placeholder="Nombre del producto" required>
+        <input type="text" id="productName" placeholder="Nombre" required>
         <input type="number" id="productPrice" placeholder="Precio" required>
         <input type="text" id="productDescription" placeholder="Descripción" required>
         <input type="text" id="productCode" placeholder="Código" required>
@@ -21,15 +22,35 @@
     </form>
 </div>
 
-<ul id="productList" class="styled-list">
-    <!-- Los productos se agregarán aquí dinámicamente -->
-</ul>
+<body data-cart-id="{{cartId}}">
+
+<!-- Listado de productos -->
+<div id="product-list" class="product-list">
+    {{#each productos}}
+        <div>
+            <strong>{{this.title}}</strong> - {{this.description}} - ${{this.price}}
+            <button onclick="addToCart({{this.id}})">Agregar al carrito</button>
+            <button onclick="deleteProduct({{this.id}})">Eliminar</button>
+        </div>
+    {{/each}}
+</div>
+
+<div style="text-align: center; margin-top: 20px;">
+    <a href="/home" class="go-home-button" style="padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+        Ir a Home
+    </a>
+</div>
+
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/clientapp.js"></script>
 
 </body>
 </html>
+
+
+
+
 
 
 

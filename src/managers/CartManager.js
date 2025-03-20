@@ -53,7 +53,7 @@ class CartManager {
         await ProductsManager.updateProduct(productId, { stock: updatedProduct.stock });
 
         // Agregar o actualizar el producto en el carrito
-        const cartProduct = cart.products.find((p) => p.id === productId);
+        const cartProduct = cart.products.find((p) => p.id === parseInt(productId));;
         if (cartProduct) {
             cartProduct.quantity += 1;
         } else {

@@ -3,90 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
     <title>Lista de Productos</title>
-    
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .main-container {
-            width: 80%;
-            margin: 20px auto;
-            text-align: center;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .card-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-        }
-        .card {
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            width: 250px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .card h2 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-        .price {
-            color: green;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .add-to-cart-btn {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .add-to-cart-btn:hover {
-            background: #0056b3;
-        }
-    </style>
 </head>
 <body>
-    <div class="main-container">
-        <h1>{{title}}</h1>
-        <div id="product-list" class="card-container">
-            {{#each productos}}
-            <div class="card">
-                <h2>{{this.title}}</h2>
-                <p class="price">$ {{this.price}}</p>
-                <p>Descripción: {{this.description}}</p>
-                <p>Código: {{this.code}}</p>
-                <p>Stock: {{this.stock}}</p>
-                <p>Categoría: {{this.category}}</p>
-                <p>
-                    Estado:
-                    {{#if this.status}}
-                    Disponible
-                    {{else}}
-                    No Disponible
-                    {{/if}}
-                </p>
-                <button class="add-to-cart-btn" data-id="{{this.id}}">Agregar al Carrito</button>
-            </div>
-            {{/each}}
-        </div>
-    </div>
+<div>
+        <h1>Bienvenido a la Home</h1>
+    <a href="/realtimeproducts" class="go-home-button">Ir a Productos en Tiempo Real</a>
+</div>
+
+<ul>
+    {{#each productos}}
+        <li>
+            <strong>{{this.title}}</strong> - {{this.description}} - ${{this.price}}
+            <button onclick="addToCart({{this.id}})">Agregar al carrito</button>
+        </li>
+    {{/each}}
+</ul>
+
 
     <!-- Scripts -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/home.js"></script>
-    <script src="/js/clientapp.js"></script>
-
+    {{!-- <script src="/js/clientapp.js"></script> --}}
 </body>
 </html>
+

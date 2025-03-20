@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <title>Carrito</title>
+</head>
+<body>
+
+<h1>Carrito ID: {{cart.id}}</h1>
+<ul>
+    {{#each cart.products}}
+        <li>
+            Producto ID: {{this.productId}} - Cantidad: {{this.quantity}}
+            <form action="/api/carts/{{../cart.id}}/product/{{this.productId}}" method="POST" style="display: inline;">
+                <button type="submit">Eliminar</button>
+            </form>
+        </li>
+    {{/each}}
+</ul>
+
+<a href="/realtimeproducts">Volver a productos</a>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/src/public/js/carrito.js"></script>
+
+</body>
+</html>
