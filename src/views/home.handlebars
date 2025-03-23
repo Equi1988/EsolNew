@@ -3,29 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/home.css">
     <title>Lista de Productos</title>
+
 </head>
 <body>
-<div>
+    <div class="container">
         <h1>Bienvenido a la Home</h1>
-    <a href="/realtimeproducts" class="go-home-button">Ir a Productos en Tiempo Real</a>
-</div>
-
-<ul>
-    {{#each productos}}
-        <li>
-            <strong>{{this.title}}</strong> - {{this.description}} - ${{this.price}}
-            <button onclick="addToCart({{this.id}})">Agregar al carrito</button>
-        </li>
-    {{/each}}
-</ul>
-
+        <a href="/realtimeproducts" class="go-home-button">Ir a Agregar Productos</a>
+        <a href="/products" class="go-home-button">Ver Productos</a>
+        <a href="/Carrito" class="go-home-button">Ver Carrito</a>
+        <a href="/Modificar" class="go-home-button">Modificar Productos</a>
+    </div>
 
     <!-- Scripts -->
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/home.js"></script>
-    {{!-- <script src="/js/clientapp.js"></script> --}}
 </body>
 </html>
+
 

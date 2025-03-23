@@ -1,47 +1,14 @@
-// // routers/productsRouter.js
-// const express = require("express");
-// const ProductsManager = require("../managers/ProductsManager");
-
-// module.exports = (io) => {
-//     const router = express.Router();
-
-//     router.get("/", async (req, res) => {
-//         const products = await ProductsManager.getProducts();
-//         res.json(products);
-//     });
-
-//     router.get("/:pid", async (req, res) => {
-//         const product = await ProductsManager.getProductById(req.params.pid);
-//         res.json(product);
-//     });
-
-//     router.post("/", async (req, res) => {
-//         const product = await ProductsManager.addProduct(req.body);
-//         io.emit("refreshProducts");
-//         res.status(201).json(product);
-//     });
-
-//     router.put("/:pid", async (req, res) => {
-//         const updated = await ProductsManager.updateProduct(req.params.pid, req.body);
-//         io.emit("refreshProducts");
-//         res.json(updated);
-//     });
-
-//     router.delete("/:pid", async (req, res) => {
-//         await ProductsManager.deleteProduct(req.params.pid);
-//         io.emit("refreshProducts");
-//         res.json({ status: "Deleted" });
-//     });
-
-//     return router;
-// };
-
 const express = require("express");
-const ProductsManager = require("../managers/ProductsManager");
-const CartManager = require("../managers/CartManager");
+const ProductsManager = require("../managers/productsManager");
+const { 
+    validateRequiredFields, 
+    validateUniqueFieldsPost, 
+    validateUniqueFieldsPut 
+} = require("../middlewares/validators");
 
 module.exports = (io) => {
     const router = express.Router();
+    const requiredFields = ["title", "description", "price", "code", "stock", "category"];
 
     router.get("/", async (req, res) => {
         const products = await ProductsManager.getProducts();
@@ -50,43 +17,64 @@ module.exports = (io) => {
 
     router.get("/:pid", async (req, res) => {
         const product = await ProductsManager.getProductById(req.params.pid);
+        if (!product) {
+            return res.status(404).json({ error: "Producto no encontrado" });
+        }
         res.json(product);
     });
 
-    router.post("/", async (req, res) => {
-        const product = await ProductsManager.addProduct(req.body);
-        io.emit("refreshProducts");
-        res.status(201).json(product);
-    });
+    router.post("/", 
+        validateRequiredFields(requiredFields), 
+        validateUniqueFieldsPost, 
+        async (req, res) => {
+            const { title, description, price, code, stock, category } = req.body;
+            try {
+                const product = await ProductsManager.addProduct({ title, description, price, code, stock, category });
+                io.emit("refreshProducts");
+                res.status(201).json({ product });
+            } catch (error) {
+                res.status(500).json({ error: "Error interno del servidor." });
+            }
+        }
+    );
 
-    router.put("/:pid", async (req, res) => {
-        const updated = await ProductsManager.updateProduct(req.params.pid, req.body);
-        io.emit("refreshProducts");
-        res.json(updated);
-    });
+    router.put("/:pid", 
+        validateRequiredFields(requiredFields), 
+        validateUniqueFieldsPut, 
+        async (req, res) => {
+            const { title, description, price, code, stock, category } = req.body;
+            try {
+                const productToUpdate = await ProductsManager.getProductById(req.params.pid);
+                if (!productToUpdate) {
+                    return res.status(404).json({ error: "Producto no encontrado" });
+                }
+                const updatedProduct = await ProductsManager.updateProduct(req.params.pid, { title, description, price, code, stock, category });
+                io.emit("refreshProducts");
+                res.status(200).json({ updatedProduct });
+            } catch (error) {
+                res.status(500).json({ error: "Error interno del servidor." });
+            }
+        }
+    );
 
     router.delete("/:pid", async (req, res) => {
-        await ProductsManager.deleteProduct(req.params.pid);
-        io.emit("refreshProducts"); // ✔️ io sí es accesible
-        res.json({ status: "Deleted" });
-    });
-    
-
-    // Ruta para agregar un producto al carrito
-    router.post("/:cartId/product/:productId", async (req, res) => {
-        const { cartId, productId } = req.params;
-
         try {
-            const updatedCart = await CartManager.addProductToCart(cartId, productId);
-            io.emit("refreshCart", updatedCart);  // Emitir evento para actualizar el carrito en tiempo real
-            res.status(201).json(updatedCart);
+            const product = await ProductsManager.getProductById(req.params.pid);
+            if (!product) {
+                return res.status(404).json({ error: "Producto no encontrado" });
+            }
+            await ProductsManager.deleteProduct(req.params.pid);
+            io.emit("refreshProducts");
+            res.json({ status: "Deleted" });
         } catch (error) {
-            res.status(500).json({ error: error.message });
+            res.status(500).json({ error: "Error interno del servidor." });
         }
     });
 
     return router;
 };
+
+
 
 
 

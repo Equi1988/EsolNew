@@ -1,20 +1,22 @@
-// managers/ProductsManager.js
 const fs = require("fs").promises;
 const path = require("path");
 
 const productsPath = path.join(__dirname, "../data/products.json");
 
 class ProductsManager {
+    // Obtener todos los productos
     static async getProducts() {
         const data = await fs.readFile(productsPath, "utf-8");
         return JSON.parse(data);
     }
 
+    // Obtener un producto por su ID
     static async getProductById(id) {
         const products = await this.getProducts();
         return products.find(p => p.id === parseInt(id));
     }
 
+    // Agregar un nuevo producto
     static async addProduct(product) {
         const products = await this.getProducts();
         const newProduct = { id: products.length + 1, ...product };
@@ -23,6 +25,7 @@ class ProductsManager {
         return newProduct;
     }
 
+    // Actualizar un producto existente
     static async updateProduct(id, updatedFields) {
         const products = await this.getProducts();
         const index = products.findIndex(p => p.id === parseInt(id));
@@ -32,6 +35,7 @@ class ProductsManager {
         return products[index];
     }
 
+    // Eliminar un producto
     static async deleteProduct(id) {
         let products = await this.getProducts();
         products = products.filter(p => p.id !== parseInt(id));

@@ -34,15 +34,39 @@ router.get('/:cid', async (req, res) => {
 });
 
 // Agregar un producto a un carrito específico
-router.post('/:cid/product/:pid', async (req, res) => {
+// router.post('/:cid/product/:pid', async (req, res) => {
+//     try {
+//         const cart = await CartManager.addProductToCart(req.params.cid, req.params.pid);
+//         res.status(201).json({ cart });
+//     } catch (error) {
+//         console.error(`Error adding product ${req.params.pid} to cart ${req.params.cid}:`, error);
+//         res.status(500).json({ error: error.message });
+//     }
+// });
+
+router.post('/:cid/producto/:pid', async (req, res) => {
     try {
-        const cart = await CartManager.addProductToCart(req.params.cid, req.params.pid);
-        res.status(201).json({ cart });
+        const { cid, pid } = req.params;
+        
+        // Verificamos si el carrito existe
+        const cart = await Cart.findById(cid);
+        if (!cart) {
+            return res.status(404).json({ message: 'Carrito no encontrado' });
+        }
+        
+        // Lógica para agregar el producto al carrito
+        // Ejemplo: si tienes un array de productos en el carrito, puedes agregarlo así
+        cart.products.push(pid);
+        
+        await cart.save(); // Guardamos el carrito con el nuevo producto
+        return res.status(200).json({ message: 'Producto agregado al carrito', cart });
     } catch (error) {
-        console.error(`Error adding product ${req.params.pid} to cart ${req.params.cid}:`, error);
-        res.status(500).json({ error: error.message });
+        console.error(error);
+        return res.status(500).json({ message: 'Error al agregar el producto al carrito' });
     }
 });
+
+
 
 // Eliminar un carrito por ID
 // Eliminar un carrito específico por ID
@@ -58,7 +82,6 @@ router.delete('/:cid', async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
-
 
 
 module.exports = router;

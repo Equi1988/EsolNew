@@ -1,9 +1,10 @@
 const fs = require("fs");
-const ProductsManager = require("../managers/ProductsManager");
+const ProductsManager = require("./productsManager");
 
 class CartManager {
     static path = "./src/data/carts.json";
 
+    // Crear un carrito nuevo
     static async createCart() {
         let carts = await this.getCarts();
         let cart = { id: carts.length ? carts[carts.length - 1].id + 1 : 1, products: [] };
@@ -12,6 +13,7 @@ class CartManager {
         return cart;
     }
 
+    // Obtener todos los carritos
     static async getCarts() {
         if (fs.existsSync(this.path)) {
             const fileData = await fs.promises.readFile(this.path, "utf-8");
@@ -21,39 +23,41 @@ class CartManager {
         }
     }
 
+    // Obtener un carrito por su ID
     static async getCartById(cid) {
         let carts = await this.getCarts();
         return carts.find(cart => cart.id === parseInt(cid));
     }
 
+    // Agregar un producto a un carrito
     static async addProductToCart(cartId, productId) {
         const carts = await this.getCarts();
         let cart = carts.find((cart) => cart.id === parseInt(cartId));
 
         // Si no existe el carrito, se crea uno nuevo
         if (!cart) {
-            console.log(`Cart ${cartId} not found. Creating a new one.`);
+            console.log(`Carrito ${cartId} no encontrado. Creando uno nuevo.`);
             cart = { id: parseInt(cartId), products: [] };
             carts.push(cart);
         }
 
-        // Obtener el producto del archivo products.json
+        // Obtener el producto desde ProductsManager
         const product = await ProductsManager.getProductById(productId);
-        console.log("Product retrieved for cart:", product);
+        console.log("Producto recuperado:", product);
 
-        // Manejar errores si el producto no existe o el stock es insuficiente
-        if (!product) throw new Error("Product not found");
-        if (product.stock <= 0) throw new Error("Product is out of stock");
+        // Validar existencia y stock del producto
+        if (!product) throw new Error("Producto no encontrado");
+        if (product.stock <= 0) throw new Error("Producto sin stock disponible");
 
         // Reducir el stock del producto antes de agregarlo al carrito
         const updatedProduct = { ...product, stock: product.stock - 1 };
-        console.log(`Stock after reduction: ${updatedProduct.stock}`);
+        console.log(`Stock después de reducción: ${updatedProduct.stock}`);
 
         // Guardar los cambios del producto actualizado
         await ProductsManager.updateProduct(productId, { stock: updatedProduct.stock });
 
         // Agregar o actualizar el producto en el carrito
-        const cartProduct = cart.products.find((p) => p.id === parseInt(productId));;
+        const cartProduct = cart.products.find((p) => p.id === parseInt(productId));
         if (cartProduct) {
             cartProduct.quantity += 1;
         } else {
@@ -66,24 +70,25 @@ class CartManager {
             });
         }
 
-        // Guardar los cambios en el carrito
+        // Guardar cambios en el carrito
         await this.saveCarts(carts);
-        console.log(`Product ${productId} added to cart ${cartId}`);
+        console.log(`Producto ${productId} agregado al carrito ${cartId}`);
         return cart;
     }
 
-    // Método para guardar los carritos en el archivo
+    // Guardar los carritos en el archivo
     static async saveCarts(carts) {
         try {
             await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2));
-            console.log("Carts saved successfully!");
+            console.log("Carritos guardados exitosamente!");
         } catch (error) {
-            console.error("Error saving carts:", error);
-            throw new Error("Unable to save carts");
+            console.error("Error al guardar los carritos:", error);
+            throw new Error("No se pudo guardar los carritos");
         }
     }
 
-        static async deleteCart(cartId) {
+    // Eliminar un carrito
+    static async deleteCart(cartId) {
         const carts = await this.getCarts();
         const index = carts.findIndex(cart => cart.id === parseInt(cartId));
         if (index === -1) return false;
@@ -91,12 +96,9 @@ class CartManager {
         await fs.promises.writeFile(this.path, JSON.stringify(carts, null, 2));
         return true;
     }
-    
-
 }
 
 module.exports = CartManager;
-
 
 
 
