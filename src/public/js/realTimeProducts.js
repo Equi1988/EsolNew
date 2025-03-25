@@ -81,6 +81,47 @@ document.addEventListener("DOMContentLoaded", () => {
     socket.on("refreshProducts", () => {
         location.reload(); // Recargar la página para ver productos actualizados
     });
+
+    const fields = [
+        { id: 'productName', type: 'string' },
+        { id: 'productPrice', type: 'number' },
+        { id: 'productDescription', type: 'string' },
+        { id: 'productCode', type: 'string' },
+        { id: 'productStock', type: 'number' },
+        { id: 'productCategory', type: 'string' },
+    ];
+    
+    fields.forEach(({ id, type }) => {
+        const input = document.getElementById(id);
+        input.addEventListener('input', () => {
+            validateField(id, type);
+        });
+    });
+    
+    function validateField(id, type) {
+        const input = document.getElementById(id);
+        const value = input.value.trim();
+        const errorElement = document.getElementById(`${id}Error`);
+    
+        if (!value) {
+            errorElement.textContent = "Este campo es obligatorio.";
+            input.classList.add("input-error");
+            input.classList.remove("input-ok");
+            return;
+        }
+    
+        if (type === 'number' && (isNaN(value) || Number(value) < 0)) {
+            errorElement.textContent = "Debe ser un número válido.";
+            input.classList.add("input-error");
+            input.classList.remove("input-ok");
+            return;
+        }
+    
+        errorElement.textContent = "";
+        input.classList.remove("input-error");
+        input.classList.add("input-ok");
+    }    
+
 });
 
 

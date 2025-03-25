@@ -30,10 +30,20 @@ class ProductsManager {
         const products = await this.getProducts();
         const index = products.findIndex(p => p.id === parseInt(id));
         if (index === -1) throw new Error("Product not found");
-        products[index] = { ...products[index], ...updatedFields };
+    
+        // Actualiza solo los campos proporcionados
+        const product = products[index];
+        for (let key in updatedFields) {
+            if (updatedFields.hasOwnProperty(key) && product.hasOwnProperty(key)) {
+                product[key] = updatedFields[key];
+            }
+        }
+    
+        // Guarda el producto actualizado en el archivo
         await fs.writeFile(productsPath, JSON.stringify(products, null, 2));
-        return products[index];
+        return product;
     }
+    
 
     // Eliminar un producto
     static async deleteProduct(id) {

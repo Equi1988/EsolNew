@@ -6,14 +6,13 @@ const validateRequiredFields = (requiredFields) => {
         const missingFields = [];
         const wrongTypes = [];
 
+        // Para permitir actualizaciones parciales, solo verificamos si los campos están presentes en el body
         requiredFields.forEach(field => {
             const value = req.body[field];
 
-            // Validar si el campo está ausente o vacío
-            if (value === undefined || value === '') {
-                missingFields.push(field);
-            } else {
-                // Validar tipos
+            // Si el campo no está presente, no es un error para la actualización parcial
+            if (value !== undefined && value !== '') {
+                // Validar tipos solo si el campo está presente
                 if (["title", "description", "code"].includes(field) && typeof value !== "string") {
                     wrongTypes.push(`${field} debe ser una cadena de texto (string).`);
                 }
@@ -31,9 +30,6 @@ const validateRequiredFields = (requiredFields) => {
         });
 
         // Retornar errores si se detectaron problemas
-        if (missingFields.length > 0) {
-            return res.status(400).json({ error: `Faltan los campos: ${missingFields.join(", ")}` });
-        }
         if (wrongTypes.length > 0) {
             return res.status(400).json({ error: `Errores de tipo: ${wrongTypes.join(", ")}` });
         }

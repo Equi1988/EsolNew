@@ -82,11 +82,65 @@ app.post('/api/carts/:cartId/product/:productId', async (req, res) => {
 
 
 // Socket.IO
+// io.on("connection", async (socket) => {
+//     console.log("Nuevo cliente conectado");
+
+//     // Inicializar productos desde ProductsManager
+//     productos = await ProductsManager.getProducts();
+//     socket.emit("initialProducts", productos);
+
+//     // Evento para agregar producto
+//     socket.on("newProduct", async (product) => {
+//         const { title, description, price, code, stock, category } = product;
+    
+//         // Validaciones
+//         if (!title || !description || !price || !code || !stock || !category) {
+//             return socket.emit("errorMessage", "Todos los campos son obligatorios");
+//         }
+//         if (typeof title !== "string" || typeof description !== "string" || typeof code !== "string" || typeof category !== "string") {
+//             return socket.emit("errorMessage", "title, description, code y category deben ser strings");
+//         }
+//         if (typeof price !== "number" || typeof stock !== "number") {
+//             return socket.emit("errorMessage", "price y stock deben ser números");
+//         }
+    
+//         // Verificar si el código existe
+//         const codeExists = productos.some(p => p.code === code);
+//         if (codeExists) {
+//             return socket.emit("errorMessage", "El código ya existe en otro producto");
+//         }
+    
+//         // Agregar el nuevo producto
+//         const newProduct = { id: productos.length + 1, ...product };
+//         await ProductsManager.addProduct(newProduct); // Guardar en el almacenamiento
+    
+//         // Obtener la lista actualizada de productos directamente desde el almacenamiento
+//         const updatedProducts = await ProductsManager.getProducts();
+    
+//         // Emitir la lista actualizada al cliente
+//         io.emit("initialProducts", updatedProducts);
+//     });
+
+//     // Evento para eliminar producto
+//     socket.on("deleteProduct", async (id) => {
+//         const exists = productos.some(p => p.id === parseInt(id));
+//         if (!exists) {
+//             return socket.emit("errorMessage", "Producto no encontrado para eliminar");
+//         }
+//         productos = productos.filter(p => p.id !== parseInt(id));
+//         await ProductsManager.deleteProduct(id); // Eliminar del almacenamiento
+//         io.emit("initialProducts", productos);
+//     });
+
+//     socket.on("disconnect", () => console.log("Cliente desconectado"));
+// });
+
+// Socket.IO
 io.on("connection", async (socket) => {
     console.log("Nuevo cliente conectado");
 
     // Inicializar productos desde ProductsManager
-    productos = await ProductsManager.getProducts();
+    let productos = await ProductsManager.getProducts(); // Obtén los productos actuales
     socket.emit("initialProducts", productos);
 
     // Evento para agregar producto
@@ -112,8 +166,12 @@ io.on("connection", async (socket) => {
 
         // Agregar el nuevo producto
         const newProduct = { id: productos.length + 1, ...product };
-        productos.push(newProduct);
         await ProductsManager.addProduct(newProduct); // Guardar en el almacenamiento
+
+        // Obtener la lista actualizada de productos directamente desde el almacenamiento
+        productos = await ProductsManager.getProducts(); // Actualizar productos
+
+        // Emitir la lista actualizada al cliente
         io.emit("initialProducts", productos);
     });
 
@@ -125,11 +183,14 @@ io.on("connection", async (socket) => {
         }
         productos = productos.filter(p => p.id !== parseInt(id));
         await ProductsManager.deleteProduct(id); // Eliminar del almacenamiento
-        io.emit("initialProducts", productos);
+        productos = await ProductsManager.getProducts(); // Obtener lista actualizada
+
+        io.emit("initialProducts", productos); // Emitir lista actualizada
     });
 
     socket.on("disconnect", () => console.log("Cliente desconectado"));
 });
+
 
 // Iniciar el servidor
 server.listen(PORT, async () => {
